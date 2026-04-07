@@ -1,10 +1,25 @@
+import os
+
 from anthropic import Anthropic
 from anthropic.types import Message
 
 
+def use_vertex_backend() -> bool:
+    v = os.getenv("ANTHROPIC_USE_VERTEX", "").lower()
+    if v in ("1", "true", "yes"):
+        return True
+    v = os.getenv("CLAUDE_CODE_USE_VERTEX", "").lower()
+    return v in ("1", "true", "yes")
+
+
 class Claude:
     def __init__(self, model: str):
-        self.client = Anthropic()
+        if use_vertex_backend():
+            from anthropic import AnthropicVertex
+
+            self.client = AnthropicVertex()
+        else:
+            self.client = Anthropic()
         self.model = model
 
     def add_user_message(self, messages: list, message):

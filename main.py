@@ -5,22 +5,31 @@ from dotenv import load_dotenv
 from contextlib import AsyncExitStack
 
 from mcp_client import MCPClient
-from core.claude import Claude
+from core.claude import Claude, use_vertex_backend
 
 from core.cli_chat import CliChat
 from core.cli import CliApp
 
 load_dotenv()
 
-# Anthropic Config
+# Anthropic / Vertex (Vertex: gcloud auth application-default login)
 claude_model = os.getenv("CLAUDE_MODEL", "")
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY", "")
 
-
 assert claude_model, "Error: CLAUDE_MODEL cannot be empty. Update .env"
-assert anthropic_api_key, (
-    "Error: ANTHROPIC_API_KEY cannot be empty. Update .env"
-)
+
+if use_vertex_backend():
+    assert os.getenv("ANTHROPIC_VERTEX_PROJECT_ID"), (
+        "Error: ANTHROPIC_VERTEX_PROJECT_ID is required when using Vertex "
+        "(ANTHROPIC_USE_VERTEX=1 or CLAUDE_CODE_USE_VERTEX=1). Update .env or your shell."
+    )
+    assert os.getenv("CLOUD_ML_REGION"), (
+        "Error: CLOUD_ML_REGION is required when using Vertex. Update .env or your shell."
+    )
+else:
+    assert anthropic_api_key, (
+        "Error: ANTHROPIC_API_KEY cannot be empty when Vertex is disabled. Update .env"
+    )
 
 
 async def main():

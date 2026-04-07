@@ -17,6 +17,18 @@ MCP Chat is a command-line interface application that enables interactive chat c
 ANTHROPIC_API_KEY=""  # Enter your Anthropic API secret key
 ```
 
+#### Optional: Google Vertex AI
+
+If you use Claude on **Vertex AI** with **Application Default Credentials** (`gcloud auth application-default login`), set:
+
+```
+ANTHROPIC_USE_VERTEX=1
+CLOUD_ML_REGION=""               # A Vertex region where the model is available for your project
+ANTHROPIC_VERTEX_PROJECT_ID=""   # Your GCP project ID
+```
+
+You can also set `CLAUDE_CODE_USE_VERTEX=1` (same effect). Use a **Vertex model ID** in `CLAUDE_MODEL` (for example `claude-sonnet-4-5@20250929`). An `ANTHROPIC_API_KEY` is **not** required when Vertex mode is enabled.
+
 ### Step 2: Install dependencies
 
 #### Option 1: Setup with uv (Recommended)
@@ -60,7 +72,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 2. Install dependencies:
 
 ```bash
-pip install anthropic python-dotenv prompt-toolkit "mcp[cli]==1.8.0"
+pip install "anthropic[vertex]" python-dotenv prompt-toolkit "mcp[cli]==1.8.0"
 ```
 
 3. Run the project
